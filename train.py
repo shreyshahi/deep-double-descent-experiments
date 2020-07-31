@@ -20,7 +20,7 @@ def train_and_log_models(epochs, models, training, test, log_file):
     test_x, test_y = test.get_all_data()
     criterion = torch.nn.MSELoss(reduction="sum")
     optimizers = [
-        torch.optim.Adam(model.parameters(), lr=0.0001)
+        torch.optim.SGD(model.parameters(), lr=0.00001)
         for model in models
     ]
     for epoch in range(epochs):
@@ -54,10 +54,11 @@ def train_and_log_models(epochs, models, training, test, log_file):
 
 def main():
     models = [
-        PolynomialModel(order=1),
+        PolynomialModel(order=i + 1)
+        for i in range(100)
     ]
 
-    epochs = 1000
+    epochs = 100000
 
     training_data = TrainingData()
     test_data = TestData()
@@ -70,7 +71,6 @@ def main():
             training_data,
             test_data,
             f1,
-            f2,
         )
 
 if __name__ == "__main__":
