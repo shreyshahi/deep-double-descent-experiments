@@ -57,7 +57,7 @@ def main():
         PolynomialModel(order=47),
     ]
 
-    epochs = 100000
+    epochs = 1000
 
     training_data = TrainingData()
     test_data = TestData()

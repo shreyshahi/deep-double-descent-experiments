@@ -16,7 +16,7 @@ def log_preds(order, epoch, x, y, pred_file):
 
 
 def train_and_log_models(order):
-    epochs = 500000
+    epochs = 100000
     model = PolynomialModel(order=order + 1)
     log_file_format = "./logs/run_log{}.csv"
     log_file = open(log_file_format.format(model.order), "w")
@@ -28,7 +28,7 @@ def train_and_log_models(order):
     )
     test_x, test_y = test.get_all_data()
     criterion = torch.nn.MSELoss(reduction="sum")
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     for epoch in range(epochs):
         train_err = 0
         for train_x, train_y in iter(train_data_loader):
