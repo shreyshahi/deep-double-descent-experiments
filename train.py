@@ -15,12 +15,12 @@ def log_preds(order, epoch, x, y, pred_file):
 
 def train_and_log_models(epochs, models, training, test, log_file):
     train_data_loader = DataLoader(
-        training, batch_size=100, shuffle=True
+        training, batch_size=4, shuffle=True
     )
     test_x, test_y = test.get_all_data()
     criterion = torch.nn.MSELoss(reduction="sum")
     optimizers = [
-        torch.optim.SGD(model.parameters(), lr=0.00001)
+        torch.optim.Adam(model.parameters(), lr=1e-5)
         for model in models
     ]
     for epoch in range(epochs):
@@ -54,8 +54,7 @@ def train_and_log_models(epochs, models, training, test, log_file):
 
 def main():
     models = [
-        PolynomialModel(order=i + 1)
-        for i in range(100)
+        PolynomialModel(order=47),
     ]
 
     epochs = 100000
