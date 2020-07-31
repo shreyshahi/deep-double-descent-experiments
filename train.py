@@ -13,7 +13,7 @@ def log_preds(order, epoch, x, y, pred_file):
         )
 
 
-def train_and_log_models(epochs, models, training, test, log_file, pred_file):
+def train_and_log_models(epochs, models, training, test, log_file):
     train_data_loader = DataLoader(
         training, batch_size=100, shuffle=True
     )
@@ -49,25 +49,21 @@ def train_and_log_models(epochs, models, training, test, log_file, pred_file):
                         loss.item(),
                     )
                 )
-                log_preds(model.order, epoch, test_x, pred, pred_file)
         print("Epoch {} logged".format(epoch))
         
 
 def main():
     models = [
         PolynomialModel(order=1),
-        PolynomialModel(order=2),
-        PolynomialModel(order=3),
     ]
 
-    epochs = 10000
+    epochs = 1000
 
     training_data = TrainingData()
     test_data = TestData()
 
-    with open("./run_log.csv", "w") as f1, open("./preds.csv", "w") as f2:
+    with open("./run_log.csv", "w") as f1:
         f1.write("order, epoch, train_err, test_err\n")
-        f2.write("order, epoch, x, y\n")
         train_and_log_models(
             epochs,
             models,
