@@ -8,7 +8,12 @@ from model import PolynomialModel
 from multiprocessing import Pool
 from os import path
 
+import ray
 import time
+
+
+ray.init()
+
 
 def log_preds(order, epoch, x, y, pred_file):
     for a, b in zip(x, y):
@@ -16,7 +21,7 @@ def log_preds(order, epoch, x, y, pred_file):
             "{}, {}, {}, {}\n".format(order, epoch, a.item(), b.item())
         )
 
-
+@ray.remote
 def train_and_log_models(order):
     if path.exists("./logs/preds_{}.csv".format(order)):
         return
@@ -42,7 +47,7 @@ def train_and_log_models(order):
             pred = model(test_x)
             loss = criterion(pred, test_y)
             data_log.append((epoch, train_err, loss.item()))
-        if epoch % 1000 == 999:
+        if epoch % 10000 == 9999:
             elapsed_time = time.time() - start_time
             print(
                 "order: {}, epoch: {} took {} seconds". format(
@@ -74,9 +79,7 @@ def train_and_log_models(order):
         
 
 def main():
-    # train_and_log_models(80)
-    with Pool() as p:
-        p.map(train_and_log_models, [80] * 16)
+    ray.get([train_and_log_models.remote(order) for order in range(1000)])
 
 
 if __name__ == "__main__":
