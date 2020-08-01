@@ -32,7 +32,7 @@ def train_and_log_models(order):
     criterion = torch.nn.MSELoss(reduction="sum").to(cuda)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     data_log = []
-    
+    print("Starting training, {}".format(order))
     for epoch in range(epochs):
         train_pred = model(train_x)
         loss = criterion(train_pred, train_y)
@@ -40,8 +40,6 @@ def train_and_log_models(order):
         loss.backward()
         optimizer.step()
         train_err = loss.item()
-        if epoch % 100000 == 99999:
-            print("Epoch {}, {} done".format(epoch + 1, model.order))
         with torch.no_grad():
             pred = model(test_x)
             loss = criterion(pred, test_y)
@@ -68,7 +66,7 @@ def train_and_log_models(order):
         
 
 def main():
-    with Pool() as p:
+    with Pool(8) as p:
         p.map(train_and_log_models, iter(range(100)))
 
 
