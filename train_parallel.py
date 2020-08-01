@@ -20,7 +20,7 @@ def train_and_log_models(order):
     if path.exists("./logs/preds_{}.csv".format(order)):
         return
     cuda = torch.device("cuda")
-    epochs = 1000000
+    epochs = 200000
     model = PolynomialModel(order=order + 1)
     model = model.to(cuda)
     training = TrainingData()
@@ -66,8 +66,8 @@ def train_and_log_models(order):
         
 
 def main():
-    with Pool(8) as p:
-        p.map(train_and_log_models, iter(range(100)))
+    with Pool(10) as p:
+        p.map(train_and_log_models, iter(range(1000)))
 
 
 if __name__ == "__main__":

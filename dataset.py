@@ -6,7 +6,10 @@ PI = 3.14
 class TrainingData(Dataset):
     def __init__(self):
         super(TrainingData, self).__init__()
-        self.x = torch.range(-2 * PI, 2 * PI, 1).unsqueeze(1)
+        self.x = torch.cat(
+            (torch.arange(-2 * PI, 2 * PI, 1), torch.tensor([2 * PI])),
+            dim=0
+        ).unsqueeze(1)
         self.y = torch.sin(self.x)
 
     def __getitem__(self, idx):
@@ -22,7 +25,7 @@ class TrainingData(Dataset):
 class TestData(Dataset):
     def __init__(self):
         super(TestData, self).__init__()
-        self.x = torch.range(-2 * PI, 2 * PI, 0.005).unsqueeze(1)
+        self.x = torch.arange(-2 * PI, 2 * PI, 0.005).unsqueeze(1)
         self.y = torch.sin(self.x)
 
     def __getitem__(self, idx):
