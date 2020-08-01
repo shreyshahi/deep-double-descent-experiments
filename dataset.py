@@ -14,6 +14,9 @@ class TrainingData(Dataset):
 
     def __len__(self):
         return len(self.x)
+    
+    def get_all_data(self):
+        return self.x, self.y
 
 
 class TestData(Dataset):
