@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from dataset import TrainingData, TestData
 from model import PolynomialModel
 
+import time
 
 def log_preds(order, epoch, x, y, pred_file):
     for a, b in zip(x, y):
@@ -14,29 +15,27 @@ def log_preds(order, epoch, x, y, pred_file):
 
 
 def train_and_log_models(epochs, models, training, test, log_file):
-    train_data_loader = DataLoader(
-        training, batch_size=4, shuffle=True
-    )
     test_x, test_y = test.get_all_data()
-    criterion = torch.nn.MSELoss(reduction="sum")
+    train_x, train_y = training.get_all_data()
+    criterion = torch.nn.MSELoss(reduction="mean")
     optimizers = [
-        torch.optim.Adam(model.parameters(), lr=1e-5)
+        torch.optim.Adam(model.parameters(), lr=1e-3)
         for model in models
     ]
+    start_time = time.time()
     for epoch in range(epochs):
         train_err = {
             model.order: 0
             for model in models
         }
-        for train_x, train_y in iter(train_data_loader):
-            for model, optimizer in zip(models, optimizers):
-                train_pred = model(train_x)
-                loss = criterion(train_pred, train_y)
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-                train_err[model.order] += loss.item()
-        print("Epoch {} done".format(epoch))
+        for model, optimizer in zip(models, optimizers):
+            train_pred = model(train_x)
+            loss = criterion(train_pred, train_y)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            train_err[model.order] += loss.item()
+        #print("Epoch {} done".format(epoch))
         with torch.no_grad():
             for model in models:
                 pred = model(test_x)
@@ -49,15 +48,18 @@ def train_and_log_models(epochs, models, training, test, log_file):
                         loss.item(),
                     )
                 )
-        print("Epoch {} logged".format(epoch))
+        if epoch % 1000 == 999:
+            elapsed_time = time.time() - start_time
+            print("Order {} took {} seconds".format(model.order, elapsed_time))
+            start_time = time.time()
         
 
 def main():
     models = [
-        PolynomialModel(order=47),
+        PolynomialModel(order=80),
     ]
 
-    epochs = 1000
+    epochs = 10000
 
     training_data = TrainingData()
     test_data = TestData()

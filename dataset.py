@@ -10,7 +10,7 @@ class TrainingData(Dataset):
             (torch.arange(-2 * PI, 2 * PI, 1), torch.tensor([2 * PI])),
             dim=0
         ).unsqueeze(1)
-        self.y = torch.sin(self.x)
+        self.y = torch.sin(self.x) + torch.normal(0, 0.05, self.x.size())
 
     def __getitem__(self, idx):
         return self.x[idx], self.y[idx]
@@ -26,7 +26,7 @@ class TestData(Dataset):
     def __init__(self):
         super(TestData, self).__init__()
         self.x = torch.arange(-2 * PI, 2 * PI, 0.005).unsqueeze(1)
-        self.y = torch.sin(self.x)
+        self.y = torch.sin(self.x) + torch.normal(0, 0.05, self.x.size())
 
     def __getitem__(self, idx):
         return self.x[idx], self.y[idx]
